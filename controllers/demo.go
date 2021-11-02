@@ -18,8 +18,8 @@ type DemoController struct {
 
 // @Title 创建某对象
 // @Description 创建一个新某对象文档
-// @Param	body	body	models.ObjectDocuEdit	true	"body content"
-// @Success 200 {string} models.Object.Id
+// @Param	body	body	models.DemoDocuEdit	true	"body content"
+// @Success 200 {string} models.Demo.Id
 // @Failure 400 请求异常提示字符串
 // @Failure 500 服务异常提示字符串
 // @router / [post]
@@ -47,7 +47,7 @@ func (d *DemoController) Post() {
 // @Title 获取某对象
 // @Description 根据ID获取某对象文档
 // @Param	id	path	string	true	"某对象ID"
-// @Success 200 {object} models.ObjectDocuEdit
+// @Success 200 {object} models.DemoDocuEdit
 // @Failure 400 请求异常提示字符串
 // @Failure 500 服务异常提示字符串
 // @router /:id [get]
@@ -67,7 +67,7 @@ func (d *DemoController) Get() {
 
 // @Title 获取全部某对象
 // @Description 获取全部某对象文档
-// @Success 200 {object} models.ObjectDocuEdit
+// @Success 200 {object} models.DemoDocuEdit
 // @Failure 500 服务异常提示字符串
 // @router / [get]
 func (d *DemoController) GetAll() {
@@ -83,7 +83,7 @@ func (d *DemoController) GetAll() {
 // @Title 更新某对象
 // @Description 根据ID更新某对象文档
 // @Param	id	path	string	true	"某对象ID"
-// @Param	body	body	models.ObjectDocuUpdate	true	"body content"
+// @Param	body	body	models.DemoDocuUpdate	true	"body content"
 // @Success 200 {string} Update Success!
 // @Failure 400 请求异常提示字符串
 // @Failure 500 服务异常提示字符串

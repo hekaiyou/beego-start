@@ -43,7 +43,7 @@ func getConnect(collection string) (*mgo.Session, *mgo.Collection) {
 
 // 公共的Mongo文档存储结构字段，包含ID、创建时间和更新时间
 type Entity struct {
-	Id         bson.ObjectId `json:"id" bson:"_id"`
+	ID         bson.ObjectId `json:"id" bson:"_id"`
 	InsertedAt time.Time     `json:"inserted_at" bson:"inserted_at"`
 	LastUpdate time.Time     `json:"last_update" bson:"last_update"`
 }
