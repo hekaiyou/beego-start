@@ -24,7 +24,7 @@ type DemoDocuUpdate struct {
 }
 
 func AddDemo(d Demo) (string, error) {
-	o.Entity = Entity{bson.NewObjectId(), time.Now().UTC(), time.Now().UTC()}
+	d.Entity = Entity{bson.NewObjectId(), time.Now().UTC(), time.Now().UTC()}
 	err := insertRow(databaseName, d)
 	return d.Id.Hex(), err
 }

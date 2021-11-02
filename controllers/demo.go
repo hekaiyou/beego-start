@@ -24,18 +24,18 @@ type DemoController struct {
 // @Failure 500 服务异常提示字符串
 // @router / [post]
 func (d *DemoController) Post() {
-	var object models.Object
-	json.Unmarshal(d.Ctx.Input.RequestBody, &object)
+	var demo models.Demo
+	json.Unmarshal(d.Ctx.Input.RequestBody, &demo)
 	valid := validation.Validation{}
-	valid.Required(object.Score, "分数").Message("不能为空")
-	valid.Range(object.Score, 0, 100, "分数").Message("需在0~100之间")
-	valid.Required(object.PlayerName, "选手姓名").Message("不能为空")
+	valid.Required(demo.Score, "分数").Message("不能为空")
+	valid.Range(demo.Score, 0, 100, "分数").Message("需在0~100之间")
+	valid.Required(demo.PlayerName, "选手姓名").Message("不能为空")
 	if valid.HasErrors() {
 		for _, err := range valid.Errors {
 			d.CustomAbort(400, fmt.Sprintf("%s%s", err.Key, err.Message))
 		}
 	}
-	id, err := models.AddObject(object)
+	id, err := models.AddDemo(demo)
 	if err != nil {
 		logs.Error(err.Error())
 		d.CustomAbort(500, err.Error())
@@ -56,12 +56,12 @@ func (d *DemoController) Get() {
 	if bson.IsObjectIdHex(id) == false {
 		d.CustomAbort(400, "某对象ID的格式不正确")
 	}
-	object, err := models.GetObject(id)
+	demo, err := models.GetDemo(id)
 	if err != nil {
 		logs.Error(err.Error())
 		d.CustomAbort(500, err.Error())
 	}
-	d.Data["json"] = object
+	d.Data["json"] = demo
 	d.ServeJSON()
 }
 
@@ -71,12 +71,12 @@ func (d *DemoController) Get() {
 // @Failure 500 服务异常提示字符串
 // @router / [get]
 func (d *DemoController) GetAll() {
-	objects, err := models.GetAllObject()
+	demo, err := models.GetAllDemo()
 	if err != nil {
 		logs.Error(err.Error())
 		d.CustomAbort(500, err.Error())
 	}
-	d.Data["json"] = objects
+	d.Data["json"] = demo
 	d.ServeJSON()
 }
 
@@ -93,7 +93,7 @@ func (d *DemoController) Put() {
 	if bson.IsObjectIdHex(id) == false {
 		d.CustomAbort(400, "某对象ID的格式不正确")
 	}
-	var object models.ObjectDocuUpdate
+	var object models.DemoDocuUpdate
 	json.Unmarshal(d.Ctx.Input.RequestBody, &object)
 	valid := validation.Validation{}
 	valid.Required(object.Score, "分数").Message("不能为空")
@@ -103,7 +103,7 @@ func (d *DemoController) Put() {
 			d.CustomAbort(400, fmt.Sprintf("%s%s", err.Key, err.Message))
 		}
 	}
-	err := models.UpdateObject(id, object)
+	err := models.UpdateDemo(id, object)
 	if err != nil {
 		logs.Error(err.Error())
 		d.CustomAbort(500, err.Error())
@@ -124,7 +124,7 @@ func (d *DemoController) Delete() {
 	if bson.IsObjectIdHex(id) == false {
 		d.CustomAbort(400, "某对象ID的格式不正确")
 	}
-	err := models.DeleteObject(id)
+	err := models.DeleteDemo(id)
 	if err != nil {
 		logs.Error(err.Error())
 		d.CustomAbort(500, err.Error())

@@ -33,6 +33,7 @@ go get github.com/globalsign/mgo
 
 ```shell
 go mod init beego_start
+go get -d -v ./...
 ```
 
 热编译运行项目。

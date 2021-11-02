@@ -8,7 +8,7 @@
 package routers
 
 import (
-	"ai_eval_service/controllers"
+	"beego_start/controllers"
 
 	beego "github.com/beego/beego/v2/server/web"
 )
