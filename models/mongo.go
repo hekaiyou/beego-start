@@ -14,9 +14,9 @@ var Session *mgo.Session
 var Database string
 
 func init() {
-	host, _ := config.String("mongo_host")
-	port, _ := config.String("mongo_port")
-	Database, _ = config.String("mongo_database")
+	host, _ := config.String("MongoHost")
+	port, _ := config.String("MongoPort")
+	Database, _ = config.String("MongoDatabase")
 	var servers strings.Builder
 	servers.WriteString(host)
 	servers.WriteString(":")
