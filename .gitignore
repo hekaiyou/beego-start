@@ -18,3 +18,4 @@ beego-start
 go.mod
 go.sum
 lastupdate.tmp
+swagger/
