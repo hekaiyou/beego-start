@@ -10,10 +10,13 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-var Session *mgo.Session
+// MongoSession 是 Mongo 数据库会话对象
+var MongoSession *mgo.Session
+// Database 是 Mongo 数据库名称
 var Database string
 
 func init() {
+	// 获取配置信息中的 Mongo 数据库连接参数
 	host, _ := config.String("MongoHost")
 	port, _ := config.String("MongoPort")
 	Database, _ = config.String("MongoDatabase")
@@ -27,7 +30,7 @@ func init() {
 		PoolLimit: 4096,                       // 连接池的数量
 	}
 	var err error
-	Session, err = mgo.DialWithInfo(diaInfo)
+	MongoSession, err = mgo.DialWithInfo(diaInfo)
 	if err != nil {
 		log.Fatalf("create mongoDB session error: %v (%v)", err, servers.String())
 	}
@@ -35,13 +38,13 @@ func init() {
 
 // 连接到具体的Mongo集合，返回MongoDB会话对象和Mongo集合对象
 func getConnect(collection string) (*mgo.Session, *mgo.Collection) {
-	ms := Session.Copy()               // 复制MongoDB会话对象，避免重复创建MongoDB会话，导致连接数超过最大值
+	ms := MongoSession.Copy()               // 复制MongoDB会话对象，避免重复创建MongoDB会话，导致连接数超过最大值
 	c := ms.DB(Database).C(collection) // 获取集合对象
 	ms.SetMode(mgo.Monotonic, true)    // 一致性模式：Monotonic（单调一致性）
 	return ms, c
 }
 
-// 公共的Mongo文档存储结构字段，包含ID、创建时间和更新时间
+// Entity 公共的Mongo文档存储结构字段，包含ID、创建时间和更新时间
 type Entity struct {
 	ID         bson.ObjectId `json:"id" bson:"_id"`
 	InsertedAt time.Time     `json:"inserted_at" bson:"inserted_at"`
