@@ -8,12 +8,18 @@ import (
 	"github.com/beego/beego/v2/server/web/context"
 )
 
+// SuccessJSON 成功JSON数据类型
+type SuccessJSON struct {
+	Code int			`json:"code"`
+	Data interface{}	`json:"data"`
+}
+
 // ErrorJSON 异常JSON数据类型
 type ErrorJSON struct {
-	Code int
-	Message string
-	ClientIP string
-	ServerTime time.Time
+	Code int				`json:"code"`
+	Message string			`json:"message"`
+	ClientIP string			`json:"client_ip"`
+	ServerTime time.Time	`json:"server_time"`
 }
 
 /*
@@ -26,6 +32,8 @@ ErrorResponseJSON 异常响应JSON
 		Message: fmt.Sprintf("%s%s", err.Key, err.Message),
 	}
 	ErrorResponseJSON(c.Ctx, 400, errorJSON)
+	// 500 异常时的简化写法
+	// ErrorResponseJSON(c.Ctx, 500, ErrorJSON{Message: err.Error()})
 	return
 */
 func ErrorResponseJSON(ctx *context.Context, code int, data ErrorJSON) {
@@ -68,4 +76,21 @@ func ValidationInspection(ctx *context.Context, valid validation.Validation) err
 		}
 	}
 	return nil
+}
+
+/*
+GetSuccessResponse 获取成功响应数据
+	ctx		请求上下文类型
+	code	请求状态码
+	data	成功JSON数据
+控制器设计
+	c.Data["json"] = GetSuccessResponse(c.Ctx, 200, map[string]string{"id": id})
+	c.ServeJSON()
+*/
+func GetSuccessResponse(ctx *context.Context, code int, data interface{}) SuccessJSON {
+	ctx.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
+	return SuccessJSON{
+		Code: code,
+		Data: data,
+	}
 }

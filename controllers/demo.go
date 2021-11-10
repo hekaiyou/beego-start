@@ -19,7 +19,7 @@ type DemoController struct {
 // Post 创建某对象
 // @Description 创建一个新某对象文档
 // @Param	body	body	models.DemoEditRequest	true	"body 内容"
-// @Success	200	{string}	models.Demo.Id
+// @Success	200	{"id": 新建文档ID}
 // @router / [post]
 func (c *DemoController) Post() {
 	var demo models.Demo
@@ -33,10 +33,24 @@ func (c *DemoController) Post() {
 	}
 	id, err := models.AddDemo(demo)
 	if err != nil {
-		logs.Error(err.Error())
-		c.CustomAbort(500, err.Error())
+		ErrorResponseJSON(c.Ctx, 500, ErrorJSON{Message: err.Error()})
+		return
 	}
-	c.Data["json"] = map[string]string{"id": id}
+	c.Data["json"] = GetSuccessResponse(c.Ctx, 200, map[string]string{"id": id})
+	c.ServeJSON()
+}
+
+// GetAll 获取全部某对象
+// @Description	获取全部某对象文档
+// @Success 200 {"id": ID, "score": 得分, "player_name": 选手姓名}
+// @router / [get]
+func (c *DemoController) GetAll() {
+	allDemo, err := models.GetAllDemo()
+	if err != nil {
+		ErrorResponseJSON(c.Ctx, 500, ErrorJSON{Message: err.Error()})
+		return
+	}
+	c.Data["json"] = GetSuccessResponse(c.Ctx, 200, allDemo)
 	c.ServeJSON()
 }
 
@@ -53,21 +67,6 @@ func (c *DemoController) Get() {
 		c.CustomAbort(400, "某对象ID的格式不正确")
 	}
 	demo, err := models.GetDemo(id)
-	if err != nil {
-		logs.Error(err.Error())
-		c.CustomAbort(500, err.Error())
-	}
-	c.Data["json"] = demo
-	c.ServeJSON()
-}
-
-// GetAll 获取全部某对象
-// @Description 获取全部某对象文档
-// @Success 200 {object} models.DemoEditRequest
-// @Failure 500 服务异常提示字符串
-// @router / [get]
-func (c *DemoController) GetAll() {
-	demo, err := models.GetAllDemo()
 	if err != nil {
 		logs.Error(err.Error())
 		c.CustomAbort(500, err.Error())
