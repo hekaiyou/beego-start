@@ -1,3 +1,5 @@
+package routers
+
 // @APIVersion 1.0.0
 // @Title Beego开始API
 // @Description 基于Golang语言的Beego框架开始API
@@ -5,7 +7,6 @@
 // @TermsOfServiceUrl http://beego.me/
 // @License Apache 2.0
 // @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
-package routers
 
 import (
 	"beego_start/controllers"

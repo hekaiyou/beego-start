@@ -3,9 +3,6 @@ package controllers
 import (
 	"beego_start/models"
 	"encoding/json"
-	"fmt"
-
-	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/globalsign/mgo/bson"
@@ -55,75 +52,70 @@ func (c *DemoController) GetAll() {
 }
 
 // Get 获取某对象
-// @Description 根据ID获取某对象文档
-// @Param	id	path	string	true	"某对象ID"
-// @Success 200 {object} models.DemoEditRequest
-// @Failure 400 请求异常提示字符串
-// @Failure 500 服务异常提示字符串
+// @Description	根据ID获取某对象文档
+// @Param	id	path	string	true	"要查询的某对象ID"
+// @Success 200 {"id": ID, "score": 得分, "player_name": 选手姓名}
 // @router /:id [get]
 func (c *DemoController) Get() {
 	id := c.GetString(":id")
 	if bson.IsObjectIdHex(id) == false {
-		c.CustomAbort(400, "某对象ID的格式不正确")
+		ErrorResponseJSON(c.Ctx, 400, ErrorJSON{Message: "某对象ID的格式不正确"})
+		return
 	}
 	demo, err := models.GetDemo(id)
 	if err != nil {
-		logs.Error(err.Error())
-		c.CustomAbort(500, err.Error())
+		ErrorResponseJSON(c.Ctx, 500, ErrorJSON{Message: err.Error()})
+		return
 	}
-	c.Data["json"] = demo
+	c.Data["json"] = GetSuccessResponse(c.Ctx, 200, demo)
 	c.ServeJSON()
 }
 
 // Put 更新某对象
-// @Description 根据ID更新某对象文档
-// @Param	id	path	string	true	"某对象ID"
-// @Param	body	body	models.DemoDocuUpdate	true	"body content"
-// @Success 200 {string} Update Success!
-// @Failure 400 请求异常提示字符串
-// @Failure 500 服务异常提示字符串
+// @Description	根据ID更新某对象文档
+// @Param	id	path	string	true	"要更新的某对象ID"
+// @Param	body	body	models.DemoUpdateRequest	true	"body 内容"
+// @Success	200	{"id": ID, "score": 得分, "player_name": 选手姓名}
 // @router /:id [put]
 func (c *DemoController) Put() {
 	id := c.GetString(":id")
 	if bson.IsObjectIdHex(id) == false {
-		c.CustomAbort(400, "某对象ID的格式不正确")
+		ErrorResponseJSON(c.Ctx, 400, ErrorJSON{Message: "某对象ID的格式不正确"})
+		return
 	}
-	var object models.DemoDocuUpdate
-	json.Unmarshal(c.Ctx.Input.RequestBody, &object)
+	var request models.DemoUpdateRequest
+	json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	valid := validation.Validation{}
-	valid.Required(object.Score, "分数").Message("不能为空")
-	valid.Range(object.Score, 0, 100, "分数").Message("需在0~100之间")
-	if valid.HasErrors() {
-		for _, err := range valid.Errors {
-			c.CustomAbort(400, fmt.Sprintf("%s%s", err.Key, err.Message))
-		}
+	valid.Required(request.Score, "分数").Message("不能为空")
+	valid.Range(request.Score, 0, 100, "分数").Message("需在0~100之间")
+	if ValidationInspection(c.Ctx, valid) != nil {
+		return
 	}
-	err := models.UpdateDemo(id, object)
+	err := models.UpdateDemo(id, request)
 	if err != nil {
-		logs.Error(err.Error())
-		c.CustomAbort(500, err.Error())
+		ErrorResponseJSON(c.Ctx, 500, ErrorJSON{Message: err.Error()})
+		return
 	}
-	c.Data["json"] = "Update Success!"
+	c.Data["json"] = GetSuccessResponse(c.Ctx, 200, map[string]string{})
 	c.ServeJSON()
 }
 
 // Delete 删除某对象
-// @Description 根据ID删除某对象文档
-// @Param	id	path	string	true	"某对象ID"
-// @Success 200 {string} Delete Success!
-// @Failure 400 请求异常提示字符串
-// @Failure 500 服务异常提示字符串
+// @Description	根据ID删除某对象文档
+// @Param	id	path	string	true	"要删除的某对象ID"
+// @Success	200	{}
 // @router /:id [delete]
 func (c *DemoController) Delete() {
 	id := c.GetString(":id")
 	if bson.IsObjectIdHex(id) == false {
-		c.CustomAbort(400, "某对象ID的格式不正确")
+		ErrorResponseJSON(c.Ctx, 400, ErrorJSON{Message: "某对象ID的格式不正确"})
+		return
 	}
 	err := models.DeleteDemo(id)
 	if err != nil {
-		logs.Error(err.Error())
-		c.CustomAbort(500, err.Error())
+		ErrorResponseJSON(c.Ctx, 500, ErrorJSON{Message: err.Error()})
+		return
 	}
-	c.Data["json"] = "Delete Success!"
+	c.Data["json"] = GetSuccessResponse(c.Ctx, 200, map[string]string{})
 	c.ServeJSON()
 }
