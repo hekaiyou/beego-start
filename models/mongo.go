@@ -55,7 +55,7 @@ type Entity struct {
 在Mongo集合中插入文档
 	collection 操作的文档
 	doc        要插入的数据
-控制器设计
+模型设计
 	U.Entity = Entity{bson.NewObjectId(), time.Now().UTC(), time.Now().UTC()}
 	err := insertRow(userDatabase, U)
 	fmt.Println(err)
@@ -70,7 +70,7 @@ func insertRow(collection string, doc interface{}) error {
 在Mongo集合中删除单个匹配文档
 	collection 操作的文档
 	selector   删除条件
-控制器设计
+模型设计
 	err := removeRow(userDatabase, bson.M{"_id": bson.ObjectIdHex("615431c35bf5245a9c7c7f80")})
 	fmt.Println(err)
 */
@@ -84,7 +84,7 @@ func removeRow(collection string, selector interface{}) error {
 在Mongo集合中删除全部匹配文档
 	collection 操作的文档
 	selector   删除条件
-控制器设计
+模型设计
 	err := removeAllRow(userDatabase, bson.M{})
 	fmt.Println(err)
 */
@@ -101,7 +101,7 @@ func removeAllRow(collection string, selector interface{}) error {
 	query      查询条件（筛选文档）
 	selector   需要过滤的数据（筛选字段）
 	result     查询到的结果
-控制器设计
+模型设计
 	var result User
 	err := findRow(userDatabase, bson.M{"name": "Name"}, bson.M{}, &result)
 	fmt.Println(err)
@@ -119,8 +119,8 @@ func findRow(collection string, query, selector, result interface{}) error {
 	query      查询条件（筛选文档）
 	selector   需要过滤的数据（筛选字段）
 	result     查询到的结果
-控制器设计
-	var result []User
+模型设计
+	var result []*User
 	err := findAllRow(userDatabase, bson.M{}, bson.M{"_id": 0}, &result)
 	fmt.Println(err)
 	fmt.Println(result)
@@ -139,8 +139,8 @@ func findAllRow(collection string, query, selector, result interface{}) error {
 	query      查询条件（筛选文档）
 	selector   需要过滤的数据（筛选字段）
 	result     查询到的结果
-控制器设计
-	var result []User
+模型设计
+	var result []*User
 	err := findPage(userDatabase, 0, 10, bson.M{}, bson.M{}, &result)
 	fmt.Println(err)
 	fmt.Println(result)
@@ -156,7 +156,7 @@ func findPage(collection string, offset, limit int, query, selector, result inte
 	collection 操作的文档
 	selector   更新条件
 	update     更新的操作
-控制器设计
+模型设计
 	err := updateRow(userDatabase, bson.M{"_id": bson.ObjectIdHex("615431c35bf5245a9c7c7f80")}, bson.M{"$set": bson.M{"name": "Name"}})
 	fmt.Println(err)
 */
@@ -171,7 +171,7 @@ func updateRow(collection string, selector, update interface{}) error {
 	collection 操作的文档
 	selector   更新条件
 	update     更新的操作
-控制器设计
+模型设计
 	err := updateAllRow(userDatabase, bson.M{"name": "Name"}, bson.M{"$set": bson.M{"name": "批量更新"}})
 	fmt.Println(err)
 */
@@ -187,7 +187,7 @@ func updateAllRow(collection string, selector, update interface{}) error {
 	collection 操作的文档
 	selector   更新条件
 	update     更新的操作
-控制器设计
+模型设计
 	U.Entity = Entity{bson.NewObjectId(), time.Now().UTC(), time.Now().UTC()}
 	U.Name = "更新或插入"
 	U.Email = "Email"
@@ -204,7 +204,7 @@ func upsertRow(collection string, selector, update interface{}) error {
 /*
 判断Mongo集合中的文档数量是否为零
 	collection 操作的文档
-控制器设计
+模型设计
 	isEmpty := isEmptyCollection(userDatabase)
 	fmt.Println(isEmpty)
 */
@@ -222,7 +222,7 @@ func isEmptyCollection(collection string) bool {
 获取Mongo集合中的匹配文档数量
 	collection 操作的文档
 	query      查询条件（筛选文档）
-控制器设计
+模型设计
 	count, err := rowCount(userDatabase, bson.M{})
 	fmt.Println(err)
 	fmt.Println(count)

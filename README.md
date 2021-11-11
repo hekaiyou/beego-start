@@ -37,6 +37,12 @@ source ~/.bashrc
 go get github.com/globalsign/mgo
 ```
 
+### 其他一些依赖
+
+```shell
+go get github.com/go-ldap/ldap/v3
+```
+
 ### 运行项目
 
 初始化模块依赖。
